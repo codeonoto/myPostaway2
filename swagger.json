@@ -1,0 +1,1051 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "2.0.0",
+        "description": "APIs for PostAway 2 application",
+        "title": "PostAway 2 API"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:5000"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "JWT": {
+                "in": "header",
+                "name": "Authorization",
+                "type": "apiKey"
+            }
+        }
+    },
+    "paths": {
+        "/api/users/signin": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Login",
+                "description": "Returns the authentication token.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Token"
+                    },
+                    "401": {
+                        "description": "Wrong Credentials"
+                    },
+                    "500": {
+                        "description": "Failed To SignIn"
+                    }
+                }
+            }
+        },
+        "/api/users/signup": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Register",
+                "description": "Returns newly registered user object.",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "gender": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Registered User"
+                    },
+                    "409": {
+                        "description": "Email Already Exists"
+                    },
+                    "500": {
+                        "description": "Failed To SignUp"
+                    }
+                }
+            }
+        },
+        "/api/users/get-details/{userId}": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get User Details By ID",
+                "description": "Get details for a specific user by ID.",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID of the user to get details"
+                    }
+                ],
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User Details Object"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    },
+                    "404": {
+                        "description": "User Not Found"
+                    },
+                    "500": {
+                        "description": "Failed TO Fetch User Data"
+                    }
+                }
+            }
+        },
+        "/api/users/get-all-details": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get All Users' Details",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "description": "Get details of all users.",
+                "responses": {
+                    "200": {
+                        "description": "List of all Users' Details"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    },
+                    "404": {
+                        "description": "Users Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Fetch Users Data"
+                    }
+                }
+            }
+        },
+        "/api/users/update-details/{userId}": {
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update User Details By ID",
+                "description": "Update details for a specific user by ID.",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID of the user to update details"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "gender": {
+                                        "type": "string"
+                                    },
+                                    "imageURL": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Image file for the post"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated User Object"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    },
+                    "403": {
+                        "description": "Not Allowed To Update Someone Else's Profile"
+                    },
+                    "404": {
+                        "description": "User Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Update Users Data"
+                    }
+                }
+            }
+        },
+        "/api/users/logout": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "User Logout",
+                "description": "Logout the user from the portal.",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Log-Out successful"
+                    },
+                    "500": {
+                        "description": "Failed To Logout"
+                    }
+                }
+            }
+        },
+        "/api/users/logout-all-device": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "User Logout From All Devices",
+                "description": "Logout the user from all devices.",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logged-Out From All Devices"
+                    },
+                    "500": {
+                        "description": "Failed To Logout From All Devices"
+                    }
+                }
+            }
+        },
+        "/api/posts/all": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "All Posts",
+                "description": "Returns all posts available on the server.",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "All Posts"
+                    },
+                    "404": {
+                        "description": "Posts Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Fetch Posts"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    }
+                }
+            }
+        },
+        "/api/posts/": {
+            "post": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Create A Post",
+                "description": "Creates a new post with a caption and an image.",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "caption": {
+                                        "type": "string",
+                                        "description": "Caption for the post"
+                                    },
+                                    "imageURL": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Image file for the post"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Newly Created Post Object"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    },
+                    "500": {
+                        "description": "Failed To Create Post"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "User Posts",
+                "description": "Returns all posts of the logged in user.",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User Posts"
+                    },
+                    "404": {
+                        "description": "Posts Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Fetch Posts"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    }
+                }
+            }
+        },
+        "/api/posts/{ID}": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Specific Post By ID",
+                "parameters": [
+                    {
+                        "name": "ID",
+                        "in": "path",
+                        " required": true,
+                        "description": "Enter The Post ID"
+                    }
+                ],
+                "description": "Takes the post id as url parameters and returns the post with the specific post id.",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Post With Post ID"
+                    },
+                    "404": {
+                        "description": "Post Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Fetch Post"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Delete Post By ID",
+                "parameters": [
+                    {
+                        "name": "ID",
+                        "in": "path",
+                        " required": true,
+                        "description": "Enter The Post ID"
+                    }
+                ],
+                "description": "Takes the post id as url parameters and deletes the specific post id.",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Nothing"
+                    },
+                    "404": {
+                        "description": "Post Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Delete Post"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    },
+                    "403": {
+                        "description": "Not Allowed To Delete Someone Else's Post"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Update A Post",
+                "parameters": [
+                    {
+                        "name": "ID",
+                        "in": "path",
+                        " required": true,
+                        "description": "Enter The Post ID"
+                    }
+                ],
+                "description": "Takes the post ID as URL parameter and returns the updated post object.",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "caption": {
+                                        "type": "string",
+                                        "description": "Caption for the post"
+                                    },
+                                    "imageURL": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "description": "Image file for the post"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Updated Post Object"
+                    },
+                    "404": {
+                        "description": "Post Not Found"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    },
+                    "403": {
+                        "description": "Not Allowed To Update Someone Else's Post"
+                    },
+                    "500": {
+                        "description": "Failed To Update Post"
+                    }
+                }
+            }
+        },
+        "/api/comments/{ID}": {
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Add Comment",
+                "parameters": [
+                    {
+                        "name": "ID",
+                        "in": "path",
+                        " required": true,
+                        "description": "Enter The Post ID"
+                    }
+                ],
+                "description": "Takes the post ID as URL parameter and returns the newly created comment object.",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "content": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Newly Created Comment Object"
+                    },
+                    "404": {
+                        "description": "Post Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Add Comment"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Delete Comment",
+                "parameters": [
+                    {
+                        "name": "ID",
+                        "in": "path",
+                        " required": true,
+                        "description": "Enter The Comment ID"
+                    }
+                ],
+                "description": "Takes the comment id as url parameters and deletes the comment.",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Nothing"
+                    },
+                    "403": {
+                        "description": "Only Post Owner And Comment Owner Can Delete The Comment"
+                    },
+                    "404": {
+                        "description": "Comment Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Delete Comment"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Update Comment",
+                "parameters": [
+                    {
+                        "name": "ID",
+                        "in": "path",
+                        " required": true,
+                        "description": "Enter The Comment ID"
+                    }
+                ],
+                "description": "Takes the comment ID as URL parameter and returns the updated comment object.",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "content": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Updated Comment Object."
+                    },
+                    "403": {
+                        "description": "Only Post Owner And Comment Owner Can Update The Comment"
+                    },
+                    "404": {
+                        "description": "Comment Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Update Comment"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Comments For Specific Post",
+                "parameters": [
+                    {
+                        "name": "ID",
+                        "in": "path",
+                        " required": true,
+                        "description": "Enter The Post ID"
+                    }
+                ],
+                "description": "Takes the post id as url parameters and returns the comments for the specific post.",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment With Post ID"
+                    },
+                    "404": {
+                        "description": "Comments Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Fetch Comments"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    }
+                }
+            }
+        },
+        "/api/likes/{ID}": {
+            "get": {
+                "tags": [
+                    "Likes"
+                ],
+                "summary": "Likes For Specific Post Or Comment",
+                "parameters": [
+                    {
+                        "name": "ID",
+                        "in": "path",
+                        "required": true,
+                        "description": "Enter The Post/Comment ID"
+                    }
+                ],
+                "description": "Takes the post/comment id as url parameters and returns the likes for the specific post/comment.",
+                "security": [
+                    {
+                        "JWT": {}
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Likes With Post/Comment ID"
+                    },
+                    "404": {
+                        "description": "Data Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Fetch Like Data"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    }
+                }
+            }
+        },
+        "/api/likes/toggle/{ID}": {
+            "get": {
+                "tags": [
+                    "Likes"
+                ],
+                "summary": "Likes And Unlikes A Specific Post/Comment",
+                "description": "Toggles the like status for a specific post/comment based on ID",
+                "parameters": [
+                    {
+                        "name": "ID",
+                        "in": "path",
+                        "required": true,
+                        "description": "Enter the Post/Comment ID"
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "Type of item ('post' or 'comment')",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Like Object With Post/Comment ID"
+                    },
+                    "200": {
+                        "description": "Post/Comment Successfully Unliked"
+                    },
+                    "500": {
+                        "description": "Failed To Process Like/Unlike Operations"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    },
+                    "404": {
+                        "description": "Post/Comment Not Found"
+                    }
+                }
+            }
+        },
+        "/api/otp/send": {
+            "post": {
+                "tags": [
+                    "OTP"
+                ],
+                "summary": "Send OTP",
+                "description": "Send OTP to a user's email",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "description": "User's email to send OTP"
+                                    }
+                                },
+                                "required": [
+                                    "email"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "An OTP Has Been Sent To ${userEmail}\n Wait For Atleast 2 Mins Before Retrying"
+                    },
+                    "500": {
+                        "description": "Failed To Send OTP"
+                    }
+                }
+            }
+        },
+        "/api/otp/verify": {
+            "post": {
+                "tags": [
+                    "OTP"
+                ],
+                "summary": "Verify OTP",
+                "description": "Verify user-entered OTP",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "otp": {
+                                        "type": "number",
+                                        "description": "User-entered OTP"
+                                    }
+                                },
+                                "required": [
+                                    "otp"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OTP Verifyed Successfuly"
+                    },
+                    "400": {
+                        "description": "OTP Did Not Match Please Try Again"
+                    },
+                    "500": {
+                        "description": "Failed To Verify OTP"
+                    }
+                }
+            }
+        },
+        "/api/otp/reset-password": {
+            "post": {
+                "tags": [
+                    "OTP"
+                ],
+                "summary": "Reset Password Using OTP",
+                "description": "Reset user's password using verified OTP",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "newPassword": {
+                                        "type": "string",
+                                        "description": "User's new password"
+                                    }
+                                },
+                                "required": [
+                                    "newPassword"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Password Reset Successfuly"
+                    },
+                    "400": {
+                        "description": "OTP Did Not Match Please Try Again"
+                    },
+                    "404": {
+                        "description": "User Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Reset Password"
+                    }
+                }
+            }
+        },
+        "/api/friends/toggle-friendship/{friendId}": {
+            "get": {
+                "tags": [
+                    "Friendship"
+                ],
+                "summary": "Toggle Friendship Status",
+                "description": "Toggle friendship status between users based on friendId.",
+                "parameters": [
+                    {
+                        "name": "friendId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID of the friend to toggle friendship status"
+                    }
+                ],
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Friend Request Cancelled"
+                    },
+                    "201": {
+                        "description": "Friendship Status Toggled Successfully"
+                    },
+                    "400": {
+                        "description": "Friend Request Cannot Be Sent To Yourself"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    },
+                    "404": {
+                        "description": "User Not Found"
+                    },
+                    "409": {
+                        "description": "You Are Already Friends"
+                    },
+                    "500": {
+                        "description": "Failed To Perform Friendship Operations"
+                    }
+                }
+            }
+        },
+        "/api/friends/get-pending-requests": {
+            "get": {
+                "tags": [
+                    "Friendship"
+                ],
+                "summary": "Get Pending Friend Requests",
+                "description": "Retrieve pending friend requests.",
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List Of Pending Friend Requests"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    },
+                    "404": {
+                        "description": "Friend Request Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Fetch Friend Requests"
+                    }
+                }
+            }
+        },
+        "/api/friends/response-to-request/{friendId}": {
+            "get": {
+                "tags": [
+                    "Friendship"
+                ],
+                "summary": "Respond To Friend Request",
+                "description": "Respond to a friend request based on friendId.",
+                "parameters": [
+                    {
+                        "name": "friendId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID of the friend request to respond to"
+                    },
+                    {
+                        "name": "response",
+                        "in": "query",
+                        "description": "Type of item ('accept' or 'reject')",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Friend Request Accepted"
+                    },
+                    "204": {
+                        "description": "Nothing"
+                    },
+                    "400": {
+                        "description": "It Looks There Is Some Issue In The URL \n Follow These Steps To Get Correct Output \n 1. Check The URL \n 2. Check The Friend ID Passed As URL Parameter \n 3. Check The Query Parameter (accept or reject only). \n Please Refer These Example URLs \n http://localhost:5000/api/friends/response-to-request/65689aa32124f6d74e83c0e6?response=reject \n http://localhost:5000/api/friends/response-to-request/65689aa32124f6d74e83c0e6?response=accept "
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    },
+                    "404": {
+                        "description": "Friend Request Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Response Friend Requests"
+                    }
+                }
+            }
+        },
+        "/api/friends/get-friends/{userId}": {
+            "get": {
+                "tags": [
+                    "Friendship"
+                ],
+                "summary": "Get User's Friend List",
+                "description": "Retrieve the friend list of a specific user based on userId.",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "description": "ID of the user to retrieve friend list"
+                    }
+                ],
+                "security": [
+                    {
+                        "JWT": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User's Friend List Retrieved Successfully"
+                    },
+                    "401": {
+                        "description": "Unauthorized Access"
+                    },
+                    "404": {
+                        "description": "Friends Not Found"
+                    },
+                    "500": {
+                        "description": "Failed To Fetch Friend List"
+                    }
+                }
+            }
+        }
+    }
+}
